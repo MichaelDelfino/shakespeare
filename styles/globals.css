@@ -1,57 +1,70 @@
 html,
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    padding: 0;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  overflow: hidden;
+    overflow: hidden;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+    color: inherit;
+    text-decoration: none;
 }
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 @media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  body {
-    color: white;
-    background: black;
-  }
+    html {
+        color-scheme: dark;
+    }
+
+    body {
+        color: white;
+        background: black;
+    }
 }
 
 
 /* The typewriter cursor effect */
 @keyframes blink-caret {
-  from,
-  to {
-    border-right: transparent;
-  }
-  50% {
-    border-right: #2761cc;
-    border-style: solid;
-    border-width: 2px;
-  }
+    from,
+    to {
+        border-right: transparent;
+    }
+    50% {
+        border-right: #2761cc;
+        border-style: solid;
+        border-width: 2px;
+        margin-left: -2px;
+        margin-bottom: -5px;
+    }
+}
+
+.para {
+    padding-right: 275px;
 }
 
 .words {
-  border-right:#2761cc;
-  border-top: transparent;
-  border-left: transparent;
-  border-bottom: transparent;
-  border-style: solid;
-  border-width: 2px;
-  letter-spacing: 0.20em;
-  animation: blink-caret 0.75s step-end infinite;
-  padding-right: 2px;
+    position: absolute;
+    letter-spacing: 0.20em;
+}
+.words-typed {
+    color: transparent;
+    border-style: solid;
+    border-width: 2px;
+    border-right: #2761cc;
+    border-top: transparent;
+    border-left: transparent;
+    border-bottom: transparent;
+    animation: blink-caret 0.75s step-end infinite;
+}
+.words-template {
+    color: rgb(171, 178, 185, 1)
 }
 
 .preserve-whitespace {
-  white-space: pre-wrap;
+    white-space: pre-wrap;
 }
