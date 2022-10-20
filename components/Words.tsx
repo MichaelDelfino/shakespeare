@@ -3,15 +3,21 @@ import {useEffect, useState, useRef} from 'react';
 
 // Import helpers
 import {addTypingListener} from '../helpers/typingListener';
-import {generateTemplate} from '../helpers/generateTemplate';
+
+// API service imports to pull words
+import { getPoetry } from '../services/poetry.api';
+
+// TODO - Move cursor to be based on template, not typed letters.
+//        This way the spacing will never be messed up.
 
 export default function Words() {
     const [state, setState] = useState({
         listening: false,
-        words: ' ',
-        template: ' I wonder if this will work',
+        typedWords: ' ',
+        template: ' ',
     });
-    const templateIndex = useRef(0);
+    const templateIndex = useRef(-1);
+    const words = useRef(' ');
 
     // Function to update state of currently typed words
     const updateWords = (mode, newChar) => {
@@ -20,10 +26,11 @@ export default function Words() {
                 setState(prevState => {
                     return {
                         ...prevState,
-                        words: prevState.words + newChar,
+                        typedWords: prevState.typedWords + newChar,
                         templateIndex: prevState.templateIndex+1
                     }
                 })
+                words.current += newChar
                 templateIndex.current ++;
                 break;
             case 'del':
@@ -32,15 +39,16 @@ export default function Words() {
                 if(templateChar){
                     templateChar.style.color = 'rgb(171, 178, 185, 1)';
                 }
-                if (state.words.length > 0) {
+                if (words.current.length > 1) {
                     setState(prevState => {
                         return {
                             ...prevState,
-                            words: prevState.words.slice(0, -1),
+                            typedWords: prevState.typedWords.slice(0, -1),
                             templateIndex: prevState.templateIndex-1
                         }
                     })
-                    templateIndex.current --;
+                    words.current = words.current.slice(0, -1);
+                    templateIndex.current--;
                 }
                 break;
         }
@@ -56,20 +64,24 @@ export default function Words() {
     }
 
     const renderTemplateByChar = (template) => {
-        let index = 0;
         const templateDOM = document.querySelector('.words-template');
-
-        for (const char of template) {
-            const charSpan = document.createElement('span');
-            charSpan.setAttribute('id', index.toString())
-            charSpan.textContent = char;
-            templateDOM?.appendChild(charSpan);
-            index++;
+        for (const line of template){
+            const linePoetry = document.createElement('div');
+            let index = 0;
+            for (const char of line) {
+                const charSpan = document.createElement('span');
+                charSpan.setAttribute('id', index.toString())
+                charSpan.textContent = char;
+                linePoetry?.appendChild(charSpan);
+                index++;
+            }
+            templateDOM?.appendChild(linePoetry);
         }
     }
 
     const validateTypedChars = (words, template, index) => {
-        const templateChar = document.getElementById(index.toString());
+        const templateChar = document.getElementById(index);
+        console.log(words[index], template[index], console.log(index))
         if (words[index] === template[index]) {
           if(templateChar){
               templateChar.style.color = 'rgb(0,255,0)';
@@ -81,6 +93,16 @@ export default function Words() {
         }
       };  
 
+    const generateTemplate = (response) => {
+        setState(prevState => {
+            return {
+                ...prevState,
+                template: ' ' + response.lines.join(),
+            }
+        });
+        renderTemplateByChar(response.lines);
+      };
+
     useEffect(() => {
         if (!state.listening) {
             setState(prevState => {
@@ -88,24 +110,24 @@ export default function Words() {
                     ...prevState,
                     listening: true,
                 }
+                // Generate words for template from some API
             });
-            // Generate words for template from some API
-            // generateTemplate(updateTemplate); 
-
-            // Render template to screen as a span per char for coloring
-            renderTemplateByChar(state.template);
+            const randomNum = Math.floor(Math.random() * 154);
+            getPoetry(randomNum, generateTemplate);
 
             // Add listener for keyboard strokes,
             // passing in updatewords function that will update state
             addTypingListener(updateWords);
         }
+
         // Validate typed characters vs template
-        validateTypedChars(state.words, state.template, templateIndex.current);
-    }, [state.words])
+        validateTypedChars(words.current, state.template, templateIndex.current);
+    }, [state.typedWords])
+    
     return (
-        <div>
-            <div className="words words-typed preserve-whitespace"><p>{state.words}</p></div>
-            <div className="words words-template preserve-whitespace"></div>
+        <div className='poetry-container'>
+            <div className="words "><p className="words-typed preserve-whitespace">{state.typedWords}</p></div>
+            <div className="words-template"><p className="words-template preserve-whitespace"></p></div>
         </div>
     )
 }

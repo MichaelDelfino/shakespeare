@@ -40,14 +40,18 @@ a {
         border-right: #2761cc;
         border-style: solid;
         border-width: 2px;
-        margin-left: -5px;
+        margin-left: -10px;
         margin-bottom: -5px;
     }
 }
 
-.para {
-    padding-right: 275px;
+
+.poetry-container {
+    display: flex;
+    width: 100%;
+    margin-left: 45px;
 }
+
 
 .words {
     position: absolute;
